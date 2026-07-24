@@ -19,6 +19,9 @@ pip3 install flask
 python3 app.py
 
 ## Author
+
 **Matthew Kofi Fiakpornu**
+
 Colgate University, Class of 2029
+
 Founder, ColorStack at Colgate
