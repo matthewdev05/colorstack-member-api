@@ -41,5 +41,17 @@ def create_user():
     users.append(new_user)
     return jsonify(new_user), 201
 
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = next((u for u in users if u["id"] == user_id), None)
+
+    if user is None:
+        return jsonify({"error": "User not found"}), 404
+
+    users.remove(user)
+    return jsonify({"message": f"User {user_id} deleted successfully"}), 200
+
+
+    
 if __name__ == '__main__':
     app.run(debug=True)
