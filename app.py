@@ -51,6 +51,23 @@ def delete_user(user_id):
     users.remove(user)
     return jsonify({"message": f"User {user_id} deleted successfully"}), 200
 
+@app.route('/users/search', methods=['GET'])
+def search_users():
+    major = request.args.get('major')
+    graduation_year = request.args.get('graduation_year')
+
+    results = users
+
+    if major:
+        results = [u for u in results if u['major'].lower() == major.lower()]
+
+    if graduation_year:
+        results = [u for u in results if str(u['graduation_year']) == str(graduation_year)]
+
+    if not results:
+        return jsonify({"error": "No users found"}), 404
+
+    return jsonify(results), 200
 
     
 if __name__ == '__main__':
