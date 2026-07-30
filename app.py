@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import sqlite3
 
 app = Flask(__name__)
 
@@ -69,6 +70,24 @@ def search_users():
 
     return jsonify(results), 200
 
-    
+    def get_db():
+    conn = sqlite3.connect('users.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    conn = get_db()
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            major TEXT NOT NULL,
+            graduation_year INTEGER NOT NULL,
+            internship_status TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+   #continue with  home code here
 if __name__ == '__main__':
     app.run(debug=True)
