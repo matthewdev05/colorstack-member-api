@@ -20,8 +20,23 @@ def init_db():
         )
     ''')
     conn.commit()
-    conn.close()
 
+    count = conn.execute('SELECT COUNT(*) FROM users').fetchone()[0]
+    if count == 0:
+        sample_users = [
+            ('Matthew Fiakpornu', 'Computer Science', 2029, 'Seeking'),
+            ('Jessica Williams', 'Electrical Engineering', 2027, 'Secured'),
+            ('David Mensah', 'Computer Science', 2028, 'Seeking'),
+            ('Aisha Johnson', 'Mathematics', 2027, 'Not Looking'),
+            ('Carlos Rivera', 'Physics', 2029, 'Seeking'),
+        ]
+        conn.executemany(
+            'INSERT INTO users (name, major, graduation_year, internship_status) VALUES (?, ?, ?, ?)',
+            sample_users
+        )
+        conn.commit()
+    conn.close()
+    
 @app.route('/')
 def home():
     return jsonify({"message": "Welcome to the ColorStack Member API"})
