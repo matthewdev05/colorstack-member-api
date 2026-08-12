@@ -17,6 +17,9 @@ def init_db():
             major TEXT NOT NULL,
             graduation_year INTEGER NOT NULL,
             internship_status TEXT NOT NULL
+            email TEXT,
+            goals TEXT,
+            meeting_time TEXT
         )
     ''')
     conn.commit()
@@ -64,9 +67,15 @@ def create_user():
         return jsonify({"error": "No data provided"}), 400
     conn = get_db()
     conn.execute(
-        'INSERT INTO users (name, major, graduation_year, internship_status) VALUES (?, ?, ?, ?)',
-        (data['name'], data['major'], data['graduation_year'], data['internship_status'])
-    )
+            'INSERT INTO users (name, major, graduation_year, internship_status, email, goals, meeting_time) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            (data['name'], data['major'], data['graduation_year'],
+            data.get('internship_status', 'Seeking'),
+            data.get('email', ''),
+            data.get('goals', ''),
+            data.get('meeting_time', ''))
+            
+        )
+    
     conn.commit()
     conn.close()
     return jsonify({"message": "User created successfully"}), 201
