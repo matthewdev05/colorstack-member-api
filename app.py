@@ -63,6 +63,7 @@ def get_user(user_id):
         return jsonify({"error": "User not found"}), 404
     return jsonify(dict(user))
 
+
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
@@ -70,18 +71,21 @@ def create_user():
         return jsonify({"error": "No data provided"}), 400
     conn = get_db()
     conn.execute(
-            'INSERT INTO users (name, major, graduation_year, internship_status, email, goals, meeting_time) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            (data['name'], data['major'], data['graduation_year'],
+        'INSERT INTO users (name, major, graduation_year, internship_status, email, goals, meeting_time) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        (
+            data.get('name', ''),
+            data.get('major', ''),
+            data.get('graduation_year', 0),
             data.get('internship_status', 'Seeking'),
             data.get('email', ''),
             data.get('goals', ''),
-            data.get('meeting_time', ''))
-            
+            data.get('meeting_time', '')
         )
-    
+    )
     conn.commit()
     conn.close()
     return jsonify({"message": "User created successfully"}), 201
+
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
