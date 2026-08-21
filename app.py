@@ -119,6 +119,43 @@ def search_users():
         return jsonify({"error": "No users found"}), 404
     return jsonify([dict(u) for u in users])
 
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    conn = get_db()
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    if user is None:
+        conn.close()
+        return jsonify({"error": "User not found"}), 404
+
+    data = request.get_json()
+    if not data:
+        conn.close()
+        return jsonify({"error": "No data provided"}), 400
+
+    conn.execute('''
+        UPDATE users
+        SET name = ?,
+            major = ?,
+            graduation_year = ?,
+            internship_status = ?,
+            email = ?,
+            goals = ?,
+            meeting_time = ?
+        WHERE id = ?
+    ''', (
+        data.get('name', user['name']),
+        data.get('major', user['major']),
+        data.get('graduation_year', user['graduation_year']),
+        data.get('internship_status', user['internship_status']),
+        data.get('email', user['email']),
+        data.get('goals', user['goals']),
+        data.get('meeting_time', user['meeting_time']),
+        user_id
+    ))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": f"User {user_id} updated successfully"}), 200
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
